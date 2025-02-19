@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/mysql2";
 import { usersTable } from "./db/schema.ts";
 import { eq } from "drizzle-orm";
 
-const db = drizzle<{ users: typeof usersTable }>(process.env.DATABASE_URL!, {
+const db = drizzle(process.env.DATABASE_URL!, {
   schema: { users: usersTable },
   mode: "default",
   logger: true,
@@ -29,25 +29,27 @@ async function main() {
 
   await db.insert(usersTable).values(userToCreate);
 
-  const user = (await db.query.users.findFirst())!;
+  const user = await db.query.users.findFirst();
 
   await db.transaction(async (tx) => {
     await tx
       .update(usersTable)
       .set({ age: 40 })
-      .where(eq(usersTable.id, user.id));
+      .where(eq(usersTable.id, user?.id ?? 0));
 
     await tx
       .update(usersTable)
       .set({ age: 50 })
-      .where(eq(usersTable.id, user.id));
+      .where(eq(usersTable.id, user?.id ?? 0));
   });
 
-  const user2 = (await db.query.users.findFirst())!;
+  const user2 = await db.query.users.findFirst();
 
   console.log({ user2 });
+
+  await db.$client.end();
 }
 
 console.log();
-main();
+await main();
 console.log();
