@@ -1,16 +1,20 @@
 {
   "type": "module",
   "scripts": {
-    "start": "node --experimental-strip-types src/index.ts",
+    "start:sqlite": "node --experimental-strip-types src/sqlite/index.ts",
+    "start:mysql": "node --experimental-strip-types src/mysql/index.ts",
     "dk:push": "drizzle-kit push",
-    "dk:generate": " drizzle-kit generate",
-    "dk:migrate": " drizzle-kit migrate"
+    "dk:generate": "drizzle-kit generate --config=drizzle.sqlite.config.ts",
+    "dk:migrate": "drizzle-kit migrate --config=drizzle.sqlite.config.ts",
+    "pull:mysql": "docker pull mysql",
+    "run:mysql": "docker run --name drizzle-mysql -e MYSQL_ROOT_PASSWORD=mypassword -d -p 3306:3306 mysql"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.39.3",
-    "libsql": "^0.5.0-pre.6"
+    "libsql": "^0.5.0-pre.6",
+    "mysql2": "^3.12.0"
   },
   "devDependencies": {
     "drizzle-kit": "^0.30.4"

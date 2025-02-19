@@ -43,6 +43,8 @@ async function main() {
   });
 
   const user2 = (await db.query.users.findFirst())!;
+
+  console.log({ user2 });
 }
 
 console.log();
