@@ -18,6 +18,8 @@ const db = drizzle(process.env.DATABASE_URL!, {
   // },
 });
 
+let now = 0;
+
 async function main() {
   await db.delete(usersTable);
 
@@ -37,7 +39,9 @@ async function main() {
       .set({ age: 40 })
       .where(eq(usersTable.id, user?.id ?? 0));
 
-    await tx
+    now = performance.now();
+
+    await db
       .update(usersTable)
       .set({ age: 50 })
       .where(eq(usersTable.id, user?.id ?? 0));
@@ -51,5 +55,10 @@ async function main() {
 }
 
 console.log();
-await main();
+try {
+  await main();
+} catch (error) {
+  console.log(performance.now() - now);
+  throw error;
+}
 console.log();
